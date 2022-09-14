@@ -35,6 +35,7 @@
 # imports
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator, AutoMinorLocator
 # Set constants
 G_AU = 39.5 # for AU, solar mass and year system
 m_sun = 2.0*1e30 #kg
@@ -108,7 +109,7 @@ def fg_solver(xi, yi, vxi, vyi, dt=0.0001, int_time=1., alpha=0):
               dt to use for numerical solution, default is 0.0001
 
     int_time: float, in Earth years
-              integration time for solution, IE how long to solve for
+              Integration time for solution, IE how long to solve for
 
     alpha: float, in AU^2
            value of alpha to use in correction for GR, defaullt is 0
@@ -141,7 +142,7 @@ def fg_solver(xi, yi, vxi, vyi, dt=0.0001, int_time=1., alpha=0):
     vx_arr[0] = vxi # AU/ Year
     vy_arr[0] = vyi # AU/ Year
 
-    # numeric integration
+    # numeric Integration
     for i in range(1, n_steps):
 
         # Calculate acceleration
@@ -157,103 +158,6 @@ def fg_solver(xi, yi, vxi, vyi, dt=0.0001, int_time=1., alpha=0):
 
     return x_arr, y_arr, vx_arr, vy_arr
 
-
-def plot_orbits(x_arrs, y_arrs, labels, colors, line_styles, title,
-                int_time, dt, save_name='youforgottoset_save_name.pdf',
-                plot_sun=True, label_fs=15,legend_fs=15, txt_fs=11.5):
-    '''Plots orbits of n planets orbits,
-       optionally plots the sun. Uses matplotlib.pyplot. Saves output.
-
-       Args:
-       x_arrs: list of arrays (arrays in AU)
-               list of x_arr values corresponding to x componet of orbit
-
-       y_arrs: list of arrays (arrays in AU)
-               list of y_arr values corresponding to x componet of orbit
-
-       labels: list of strings
-               list containing the label for the plot legend corresponding to
-               the same index orbit
-
-      colors: list of strings
-              list containing the color (str) for the plot corresponding to
-              the same index orbit
-
-      line_styles: list of strings
-                   list containing the linestyle for the plot corresponding to
-                   the same index orbit
-
-      title: str
-             title of plot
-
-      int_time: float, in Earth years
-                integration time for solution, IE how long the plot is for
-
-
-      dt: float, Earth in years
-                dt to use for plotting, default is 0.0001
-
-      **KArgs:
-      save_name: str
-                 argument for plt.savefig()
-                 default is 'youforgottoset_save_name.pdf
-
-      plot_sun: bool
-                if True, plots the sun at the center of the figure
-
-      label_fs: float
-                fontsize to use for plot (exluding legend), default is 15
-
-      legend_fs: float
-                 fontsize to use for legend, default is 15
-
-      txt_fs: float
-              fontsize to use for plt.text(), default is 11.5
-
-      Returns:
-      None, plot is saved in the same dir as where the program is stored
-
-     '''
-    # initalize figure
-    fig = plt.figure(figsize=(6, 6), dpi=80)
-    ax = fig.add_axes([0, 0, 1, 1])
-
-    # plot sun
-    if plot_sun == True:
-        plt.scatter(0,0,marker ='o',color ='gold',label = 'Sun')
-
-
-    # plot planets
-    for i in range(len(x_arrs)):
-        # get info for the ith planet
-        x_arr = x_arrs[i]
-        y_arr = y_arrs[i]
-        label = labels[i]
-        color = colors[i]
-        linestyle = line_styles[i]
-
-        # plot orbits
-        plt.plot(x_arr, y_arr, color=color, label=label, linestyle=linestyle)
-
-        # plot ending postion
-        plt.scatter(x_arr[-1], y_arr[-1], color=color)
-
-    # adjust plot parameters and add labels
-    plt.xlabel("x (AU)", fontsize=label_fs)
-    plt.ylabel("y (AU)",fontsize=label_fs)
-    plt.axis('square')
-    plt.xticks(fontsize=label_fs)
-    plt.yticks(fontsize=label_fs)
-    plt.legend(fontsize=legend_fs,
-               bbox_to_anchor=(1., .93), fancybox=True,
-               title_fontsize=legend_fs, loc='center left', )
-    plt.title(title, fontsize=15, )
-    plt.text(0.65,0.94, 'Initgration time of ' + str(int_time)[0:3] + ' (yr)'
-               +' \n$\Delta$t = ' + str(dt) + ' (yr)',
-               fontsize=txt_fs, transform=ax.transAxes,)
-    plt.savefig(save_name, bbox_inches='tight') # saves plot
-    plt.close() # closes figure to keep memory use low
-    return
 
 
 def angular_momentum(x, y, vx, vy, m_p, m_sun = 2.0*1e30):
@@ -313,7 +217,7 @@ def velcoity_plot(vx_arrs, vy_arrs, int_time, dt,
              n vy_arrs (array, float) in a list
 
     int_time: float, in Earth years
-              integration time for solution, IE how long the plot is for
+              Integration time for solution, IE how long the plot is for
 
 
     dt: float, Earth in years
@@ -387,7 +291,7 @@ def plot_orbits(x_arrs, y_arrs, labels, colors, line_styles, title,
              title of plot
 
       int_time: float, in Earth years
-                integration time for solution, IE how long the plot is for
+                Integration time for solution, IE how long the plot is for
 
 
       dt: float, Earth in years
@@ -417,7 +321,16 @@ def plot_orbits(x_arrs, y_arrs, labels, colors, line_styles, title,
     # initalize figure
     fig = plt.figure(figsize=(6, 6), dpi=80)
     ax = fig.add_axes([0, 0, 1, 1])
-
+    tdir = 'in'
+    plt.rcParams['xtick.direction'] = tdir
+    plt.rcParams['ytick.direction'] = tdir
+    ax.xaxis.set_minor_locator(MultipleLocator(0.5))
+    ax.xaxis.set_minor_locator(MultipleLocator(0.5))
+    ax.yaxis.set_minor_locator(MultipleLocator(0.5))
+    ax.yaxis.set_minor_locator(MultipleLocator(0.5))
+    ax.yaxis.set_ticks_position('both')
+    ax.xaxis.set_ticks_position('both')
+    plt.grid(ls='--')
     # plot sun
     if plot_sun == True:
         plt.scatter(0,0,marker ='o',color ='gold',label = 'Sun')
@@ -448,7 +361,7 @@ def plot_orbits(x_arrs, y_arrs, labels, colors, line_styles, title,
                bbox_to_anchor=(1., .93), fancybox=True,
                title_fontsize=legend_fs, loc='center left', )
     plt.title(title, fontsize=15, )
-    plt.text(0.65,0.94, 'Initgration time of ' + str(int_time)[0:3] + ' (yr)'
+    plt.text(0.63,0.94, 'Integration Time of ' + str(int_time)[0:3] + ' (yr)'
                +' \n$\Delta$t = ' + str(dt) + ' (yr)',
                fontsize=txt_fs, transform=ax.transAxes,)
     plt.savefig(save_name, bbox_inches='tight') # saves plot
