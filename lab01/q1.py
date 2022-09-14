@@ -5,7 +5,7 @@
 # NAME:     q1.py                                                             #
 #                                                                             #
 # PURPOSE: Calculatss Newtonion, and GR orbits for Mercury,                   #
-# produces orbital dynamic plots                                              #
+#          produces orbital dynamic plots                                     #
 #=============================================================================#
 #                                                                             #
 # The MIT License (MIT)                                                       #
@@ -35,8 +35,6 @@
 # imports
 import numpy as np
 import matplotlib.pyplot as plt
-
-
 # Set constants
 G_AU = 39.5 # for AU, solar mass and year system
 m_sun = 2.0*1e30 #kg
@@ -45,6 +43,7 @@ AU = 1.496*1e11 #m
 m__merc = 3.285*10**23 # kg
 year = 365*24*60*60 # seconds in a year
 
+
 # functions
 def gr_2b_g_acc(x, y, G=39.5, alpha=0, m_sun=1):
     '''Calculates the x, and y componets of GR corrected Newtonion gravitional
@@ -52,15 +51,15 @@ def gr_2b_g_acc(x, y, G=39.5, alpha=0, m_sun=1):
     the sun.
 
     Args:
-    x: float, in m
+    x: float, in AU
        positioin in the x direction
 
-    y: float, in m
+    y: float, in AU
        position in the y direction
 
     **KArgs
     G: float,
-       G constant to use, defAUlt is SI units
+       G constant to use, default is in AU, Solar Mass, Earth Year system
 
     alpha: float, in AU^2
            value of alpha to use in correction for GR, defAUlt is 0
@@ -86,7 +85,8 @@ def gr_2b_g_acc(x, y, G=39.5, alpha=0, m_sun=1):
 
 def fg_solver(xi, yi, vxi, vyi, dt=0.0001, int_time=1., alpha=0):
     '''Numerically solves the 2 body problem using the GR correction
-    for Newtonion gravity, alpha=0 corresponds to Newton
+    for Newtonion gravity, alpha=0 corresponds to Newtonion model.
+    Helocentric model, IE x=y=0 is the location of the sun.
     Uses the The “Euler-Cromer” method.
 
      Args:
@@ -111,7 +111,7 @@ def fg_solver(xi, yi, vxi, vyi, dt=0.0001, int_time=1., alpha=0):
               integration time for solution, IE how long to solve for
 
     alpha: float, in AU^2
-           value of alpha to use in correction for GR, defAUlt is 0
+           value of alpha to use in correction for GR, defaullt is 0
 
 
     Returns:
@@ -158,10 +158,10 @@ def fg_solver(xi, yi, vxi, vyi, dt=0.0001, int_time=1., alpha=0):
     return x_arr, y_arr, vx_arr, vy_arr
 
 
-def plot_orbits(x_arrs, y_arrs, labels, colors, color_int, line_styles, title,
+def plot_orbits(x_arrs, y_arrs, labels, colors, line_styles, title,
                 int_time, dt, save_name='youforgottoset_save_name.pdf',
-                plot_sun=True, label_fs=15,legend_fs=15):
-    '''Plots orbits of n planet orbits (with the same inital conditions),
+                plot_sun=True, label_fs=15,legend_fs=15, txt_fs=11.5):
+    '''Plots orbits of n planets orbits,
        optionally plots the sun. Uses matplotlib.pyplot. Saves output.
 
        Args:
@@ -178,9 +178,6 @@ def plot_orbits(x_arrs, y_arrs, labels, colors, color_int, line_styles, title,
       colors: list of strings
               list containing the color (str) for the plot corresponding to
               the same index orbit
-
-      color_int: str
-                 what color to plot the starting positon
 
       line_styles: list of strings
                    list containing the linestyle for the plot corresponding to
@@ -204,22 +201,27 @@ def plot_orbits(x_arrs, y_arrs, labels, colors, color_int, line_styles, title,
       plot_sun: bool
                 if True, plots the sun at the center of the figure
 
-      label_fs: int
+      label_fs: float
                 fontsize to use for plot (exluding legend), default is 15
 
-      legend_fs: int
+      legend_fs: float
                  fontsize to use for legend, default is 15
 
-     Returns:
-     None, plot is saved in the same dir as where the program is stored
+      txt_fs: float
+              fontsize to use for plt.text(), default is 11.5
+
+      Returns:
+      None, plot is saved in the same dir as where the program is stored
 
      '''
     # initalize figure
-    plt.figure(figsize=(8, 8), dpi=80)
+    fig = plt.figure(figsize=(6, 6), dpi=80)
+    ax = fig.add_axes([0, 0, 1, 1])
 
     # plot sun
     if plot_sun == True:
         plt.scatter(0,0,marker ='o',color ='gold',label = 'Sun')
+
 
     # plot planets
     for i in range(len(x_arrs)):
@@ -233,8 +235,8 @@ def plot_orbits(x_arrs, y_arrs, labels, colors, color_int, line_styles, title,
         # plot orbits
         plt.plot(x_arr, y_arr, color=color, label=label, linestyle=linestyle)
 
-    # plot inital condition
-    plt.scatter(x_arr[0], y_arr[0], color=color_int, label="Starting Positon")
+        # plot ending postion
+        plt.scatter(x_arr[-1], y_arr[-1], color=color)
 
     # adjust plot parameters and add labels
     plt.xlabel("x (AU)", fontsize=label_fs)
@@ -242,14 +244,15 @@ def plot_orbits(x_arrs, y_arrs, labels, colors, color_int, line_styles, title,
     plt.axis('square')
     plt.xticks(fontsize=label_fs)
     plt.yticks(fontsize=label_fs)
-    plt.legend(title='Initgration time of ' + str(int_time)[0:3] + ' (yr)'
-               +' \n$\Delta$t = ' + str(dt) + ' (yr)',fontsize=legend_fs,
-               bbox_to_anchor=(1, 1), title_fontsize=legend_fs)
-    plt.title(title, fontsize=label_fs)
-    plt.tight_layout()
-    plt.savefig(save_name) # saves plot
+    plt.legend(fontsize=legend_fs,
+               bbox_to_anchor=(1., .93), fancybox=True,
+               title_fontsize=legend_fs, loc='center left', )
+    plt.title(title, fontsize=15, )
+    plt.text(0.65,0.94, 'Initgration time of ' + str(int_time)[0:3] + ' (yr)'
+               +' \n$\Delta$t = ' + str(dt) + ' (yr)',
+               fontsize=txt_fs, transform=ax.transAxes,)
+    plt.savefig(save_name, bbox_inches='tight') # saves plot
     plt.close() # closes figure to keep memory use low
-
     return
 
 
@@ -348,8 +351,110 @@ def velcoity_plot(vx_arrs, vy_arrs, int_time, dt,
     plt.legend(fontsize=fs, bbox_to_anchor=(1, 1))
     plt.title(title, fontsize=fs)
     plt.tight_layout()
-    plt.savefig(save_name) # saves plopt
+    plt.savefig(save_name, bbox_inches='tight') # saves plopt
     plt.close() # closes figure to save mem
+
+
+def plot_orbits(x_arrs, y_arrs, labels, colors, line_styles, title,
+                int_time, dt, save_name='youforgottoset_save_name.pdf',
+                plot_sun=True, label_fs=15,legend_fs=15, txt_fs=11.5):
+    '''Plots orbits of n planets orbits,
+       optionally plots the sun. Uses matplotlib.pyplot. Saves output.
+
+       Args:
+       x_arrs: list of arrays (arrays in AU)
+               list of x_arr values corresponding to x componet of orbit
+
+       y_arrs: list of arrays (arrays in AU)
+               list of y_arr values corresponding to x componet of orbit
+
+       labels: list of strings
+               list containing the label for the plot legend corresponding to
+               the same index orbit
+
+      colors: list of strings
+              list containing the color (str) for the plot corresponding to
+              the same index orbit
+
+      color_int: str
+                 what color to plot the starting positon
+
+      line_styles: list of strings
+                   list containing the linestyle for the plot corresponding to
+                   the same index orbit
+
+      title: str
+             title of plot
+
+      int_time: float, in Earth years
+                integration time for solution, IE how long the plot is for
+
+
+      dt: float, Earth in years
+                dt to use for plotting, default is 0.0001
+
+      **KArgs:
+      save_name: str
+                 argument for plt.savefig()
+                 default is 'youforgottoset_save_name.pdf
+
+      plot_sun: bool
+                if True, plots the sun at the center of the figure
+
+      label_fs: float
+                fontsize to use for plot (exluding legend), default is 15
+
+      legend_fs: float
+                 fontsize to use for legend, default is 15
+
+      txt_fs: float
+              fontsize to use for plt.text(), default is 11.5
+
+      Returns:
+      None, plot is saved in the same dir as where the program is stored
+
+     '''
+    # initalize figure
+    fig = plt.figure(figsize=(6, 6), dpi=80)
+    ax = fig.add_axes([0, 0, 1, 1])
+
+    # plot sun
+    if plot_sun == True:
+        plt.scatter(0,0,marker ='o',color ='gold',label = 'Sun')
+
+
+    # plot planets
+    for i in range(len(x_arrs)):
+        # get info for the ith planet
+        x_arr = x_arrs[i]
+        y_arr = y_arrs[i]
+        label = labels[i]
+        color = colors[i]
+        linestyle = line_styles[i]
+
+        # plot orbits
+        plt.plot(x_arr, y_arr, color=color, label=label, linestyle=linestyle)
+
+        # plot ending postion  condition
+        plt.scatter(x_arr[-1], y_arr[-1], color=color,)
+
+    # adjust plot parameters and add labels
+    plt.xlabel("x (AU)", fontsize=label_fs)
+    plt.ylabel("y (AU)",fontsize=label_fs)
+    plt.axis('square')
+    plt.xticks(fontsize=label_fs)
+    plt.yticks(fontsize=label_fs)
+    plt.legend(fontsize=legend_fs,
+               bbox_to_anchor=(1., .93), fancybox=True,
+               title_fontsize=legend_fs, loc='center left', )
+    plt.title(title, fontsize=15, )
+    plt.text(0.65,0.94, 'Initgration time of ' + str(int_time)[0:3] + ' (yr)'
+               +' \n$\Delta$t = ' + str(dt) + ' (yr)',
+               fontsize=txt_fs, transform=ax.transAxes,)
+    plt.savefig(save_name, bbox_inches='tight') # saves plot
+    plt.close() # closes figure to keep memory use low
+    return
+
 
 # main program
 if __name__ == "__main__":
@@ -382,10 +487,8 @@ if __name__ == "__main__":
 
     # set titles and plot
     title= 'Mercury\'s Orbit'
-    plot_orbits(x_arrs, y_arrs, labels, colors,
-                    color_int, line_styles, title, int_time, dt,
-                    save_name='q1_orbit.pdf', plot_sun=True, label_fs=15,
-                    legend_fs=15)
+    plot_orbits(x_arrs, y_arrs, labels, colors, line_styles, title,
+                    int_time, dt, save_name='q1_orbit.pdf')
 
 
     title = 'Mercury\'s Newtonion Orbit'
