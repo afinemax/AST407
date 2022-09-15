@@ -319,18 +319,9 @@ def plot_orbits(x_arrs, y_arrs, labels, colors, line_styles, title,
 
      '''
     # initalize figure
-    fig = plt.figure(figsize=(6, 6), dpi=80)
+    fig = plt.figure()#figsize=(6, 6), dpi=80)
     ax = fig.add_axes([0, 0, 1, 1])
-    tdir = 'in'
-    plt.rcParams['xtick.direction'] = tdir
-    plt.rcParams['ytick.direction'] = tdir
-    ax.xaxis.set_minor_locator(MultipleLocator(0.5))
-    ax.xaxis.set_minor_locator(MultipleLocator(0.5))
-    ax.yaxis.set_minor_locator(MultipleLocator(0.5))
-    ax.yaxis.set_minor_locator(MultipleLocator(0.5))
-    ax.yaxis.set_ticks_position('both')
-    ax.xaxis.set_ticks_position('both')
-    plt.grid(ls='--')
+
     # plot sun
     if plot_sun == True:
         plt.scatter(0,0,marker ='o',color ='gold',label = 'Sun')
@@ -358,10 +349,12 @@ def plot_orbits(x_arrs, y_arrs, labels, colors, line_styles, title,
     plt.xticks(fontsize=label_fs)
     plt.yticks(fontsize=label_fs)
     plt.legend(fontsize=legend_fs,
-               bbox_to_anchor=(1., .93), fancybox=True,
+               bbox_to_anchor=(1., .90), fancybox=True,
                title_fontsize=legend_fs, loc='center left', )
     plt.title(title, fontsize=15, )
-    plt.text(0.63,0.94, 'Integration Time of ' + str(int_time)[0:3] + ' (yr)'
+    # 0.61, 0.94
+    #
+    plt.text(0.52,0.93, 'Integration Time of ' + str(int_time)[0:4] + ' (yr)'
                +' \n$\Delta$t = ' + str(dt) + ' (yr)',
                fontsize=txt_fs, transform=ax.transAxes,)
     plt.savefig(save_name, bbox_inches='tight') # saves plot

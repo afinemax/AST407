@@ -194,14 +194,14 @@ if __name__ == "__main__":
     labels = ['Earth', 'Jupiter']
     colors = ['blue', 'red']
     line_styles = ['-', '--']
-    title='Earth Orbit'
+    title='Earth & Jupiter Orbit'
     save_name='q2_earth.pdf'
     plot_orbits(x_arrs, y_arrs, labels, colors, line_styles, title,
                     int_time, dt, save_name=save_name,
                     plot_sun=True, label_fs=15,legend_fs=15)
 
     # new simulation, update parameters
-    int_time = 3.3 # Earth Yr
+    int_time = 3.58 # Earth Yr
     dt = 0.0001 # Earth years
     jupiter_dyn = fg_2b_solver(xJi, yJi, vxJi, vyJi, dt=dt, int_time=int_time,)
     earth_dyn = fg_3b_solver(earth_i, jupiter_dyn, 1000*M_j, dt=dt,
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     labels = ['Earth', 'Jupiter']
     colors = ['blue', 'red']
     line_styles = ['-', '--']
-    title='Earth Orbit with $1000xM_J$'
+    title='Earth Orbit With Exaggerated Jupiter Mass'
     save_name='q2_earth_mj.pdf'
     plot_orbits(x_arrs, y_arrs, labels, colors, line_styles, title,
                     int_time, dt, save_name=save_name,
