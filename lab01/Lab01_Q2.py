@@ -2,7 +2,7 @@
 
 #=============================================================================#
 #                                                                             #
-# NAME:     q2.py                                                             #
+# NAME:     Lab01_q2.py                                                       #
 #                                                                             #
 # PURPOSE: Calculates & plots the orbit of Earth, taking into account         #
 #          the effects of Jupiter on earth for 10 years, again but for        #
